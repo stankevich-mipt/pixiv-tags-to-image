@@ -4,7 +4,7 @@ Author: Stankevich Andrey, MIPT <stankevich.as@phystech.edu>
 
 import torch
 import torch.nn as nn
-from modules import (
+from .modules import (
 	MaskedConv2d,
 	GatedResnet,
 	DownShiftedConv2d,

@@ -1,4 +1,9 @@
 /env/
 /pixelcnn/__pycache__/
 /dataset/.ipynb_checkpoints/
+/dataset/dataset_creation.ipynb
+/dataset/files_to_tags_1.pickle
+/dataset/files_to_tags_2.pickle
+/dataset/files_to_tags_3.pickle
+/dataset/images_pixiv/
 /pixelcnn/.ipynb_checkpoints/

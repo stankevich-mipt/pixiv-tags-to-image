@@ -24,11 +24,11 @@ class MaskedConv2d(nn.Conv2d):
 
 def down_shift(x):
 	b, c, w, h = x.size()
-	return torch.cat([torch.zeros(b, c, 1, h), x[:, :, :w-1, :]], dim=2)
+	return torch.cat([torch.zeros(b, c, 1, h).to(x.device), x[:, :, :w-1, :]], dim=2)
 
 def right_shift(x):
 	b, c, w, h = x.size()
-	return torch.cat([torch.zeros(b, c, w, 1), x[:, :, :, :h-1]], dim=3)
+	return torch.cat([torch.zeros(b, c, w, 1).to(x.device), x[:, :, :, :h-1]], dim=3)
 
 
 class DownShiftedConv2d(nn.Conv2d):
@@ -45,7 +45,7 @@ class DownShiftedConv2d(nn.Conv2d):
 
 	def forward(self, x):
 		x = self.shift_pad(x)
-		return right_shift(super().forward(x))
+		return down_shift(super().forward(x))
 
 
 class DownRightShiftedConv2d(nn.Conv2d):
@@ -57,7 +57,7 @@ class DownRightShiftedConv2d(nn.Conv2d):
 	
 	def forward(self, x):
 		x = self.shift_pad(x)
-		return down_shift(super().forward(x))
+		return down_shift(right_shift(super().forward(x)))
 
 
 class GatedResnet(nn.Module):
@@ -89,26 +89,25 @@ class GatedResnet(nn.Module):
 		self.h_skip = nn.Conv2d(channels, channels, kernel_size=1)
 
 	def forward(self, h, v):
-
-		h_in = self.nonlinearity(h)
-		v_in = self.nonlinearity(v)
-
-		v_out  = self.nonlinearity(self.v_conv(v_in))
-		v_to_h = self.nonlinearity(self.v_to_h(v_out))
+		
+		v_out  = self.nonlinearity(self.v_conv(v))
 		
 		# gated activation for vertical stack 
 		v_out_tanh, v_out_sigma = torch.split(v_out, self.channels, dim=1)
-		v_out = torch.tanh(v_out_tanh) * torch.sigmoid(v_out_sigma)
-		v_out_ = self.nonlinearity(self.v_fc(v_out))
-		v_out_ += v
+		v_out  = torch.tanh(v_out_tanh) * torch.sigmoid(v_out_sigma)
+		v_out += v
+
+		# conditioning on vertical stack
+		v_to_h = self.nonlinearity(self.v_to_h(v_out))
 
 		# gated activation for horizontal stack
-		h_out  = self.nonlinearity(self.h_conv(h_in))
+		h_out  = self.nonlinearity(self.h_conv(h))
 		h_out += v_to_h
 		h_out_tanh, h_out_sigma = torch.split(h_out, self.channels, dim=1)
 		h_out  = torch.tanh(h_out_tanh) * torch.sigmoid(h_out_sigma)
-		h_out_ = self.nonlinearity(self.h_fc(h_out))
+		h_out += h
+		
+		# skip connection to output
 		h_skip = self.nonlinearity(self.h_skip(h_out))
-		h_out_ += h
-
-		return h_out_, v_out_, h_skip
+		
+		return h_out, v_out, h_skip
