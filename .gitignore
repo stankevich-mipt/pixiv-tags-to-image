@@ -6,4 +6,10 @@
 /dataset/files_to_tags_2.pickle
 /dataset/files_to_tags_3.pickle
 /dataset/images_pixiv/
+/dataset/tags.txt
+/dataset/files_to_tags.pickle
 /pixelcnn/.ipynb_checkpoints/
+
+/vqvae/test.ipynb
+/vqvae/__pycache__/
+/vqvae/.ipynb_checkpoints/

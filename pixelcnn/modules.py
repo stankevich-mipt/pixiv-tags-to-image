@@ -45,7 +45,7 @@ class DownShiftedConv2d(nn.Conv2d):
 
 	def forward(self, x):
 		x = self.shift_pad(x)
-		return down_shift(super().forward(x))
+		return super().forward(x)
 
 
 class DownRightShiftedConv2d(nn.Conv2d):
@@ -57,7 +57,7 @@ class DownRightShiftedConv2d(nn.Conv2d):
 	
 	def forward(self, x):
 		x = self.shift_pad(x)
-		return down_shift(right_shift(super().forward(x)))
+		return super().forward(x)
 
 
 class GatedResnet(nn.Module):

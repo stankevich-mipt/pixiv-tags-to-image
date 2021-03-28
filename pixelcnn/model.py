@@ -69,8 +69,8 @@ class GatedPixelCNN(nn.Module):
 
 	def forward(self, x):
 
-		v_out = self.conv_v(x)
-		h_out = self.conv_h(x)
+		v_out = down_shift(self.conv_v(x))
+		h_out = right_shift(self.conv_h(x))
 
 		skip_connections = []
 
