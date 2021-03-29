@@ -34,5 +34,5 @@ class PixelCNNDataset(Dataset):
     def __getitem__(self, idx):
         
         img_name = os.path.join(self.root_dir, self.images[idx])
-        img      = Image.open(img_name).resize((64, 64), Image.ANTIALIAS)
-        return torch.from_numpy(np.array(img)).permute(2, 0, 1).float()
+        img      = Image.open(img_name).resize((256, 256), Image.ANTIALIAS)
+        return torch.from_numpy(np.array(img)).permute(2, 0, 1).float() / 255.

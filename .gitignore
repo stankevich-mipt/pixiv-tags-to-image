@@ -5,8 +5,12 @@
 /dataset/files_to_tags_1.pickle
 /dataset/files_to_tags_2.pickle
 /dataset/files_to_tags_3.pickle
+/dataset/files_to_tags_4.pickle
+/dataset/files_to_tags_5.pickle
 /dataset/images_pixiv/
+/dataset/images_pixiv_2/
 /dataset/tags.txt
+
 /dataset/files_to_tags.pickle
 /pixelcnn/.ipynb_checkpoints/
 
