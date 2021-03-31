@@ -12,6 +12,12 @@ from .decoder import Decoder
 from .quantizer import VectorQuantizer
 
 
+class ReLU1(nn.ReLU):
+
+	def forward(self, x):
+		return torch.clamp(super().forward(x), min=0., max=1.)
+
+
 class VQVAE(nn.Module):
 
 	def __init__(
@@ -79,13 +85,15 @@ class VQVAE2(nn.Module):
 		self.quantizer_b = VectorQuantizer(self.embedding_dim, self.n_embed)
 
 		self.decoder_t = Decoder(
-			input_channels=self.embedding_dim, n_hid=self.n_hid, n_groups=1, n_out=self.n_hid)
+			input_channels=self.embedding_dim, n_hid=self.n_hid, n_groups=1, n_out=self.embedding_dim)
 		self.decoder_b = Decoder(
 			input_channels=self.embedding_dim * 2, n_hid=self.n_hid, n_groups=2)
 		
 		self.upsample_t = nn.ConvTranspose2d(
 			self.embedding_dim, self.embedding_dim, 4, stride=2, padding=1
 		)
+
+		self.scaler = ReLU1()
 
 
 	def encode(self, x):
@@ -115,4 +123,4 @@ class VQVAE2(nn.Module):
 
 	def forward(self, x):
 		quant_t, quant_b, diff, _, _ = self.encode(x)
-		return torch.sigmoid(self.decode(quant_t, quant_b)), diff
+		return sefl.scaler(self.decode(quant_t, quant_b)), diff

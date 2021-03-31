@@ -84,7 +84,12 @@ class Decoder(nn.Module):
 							factor * self.n_hid, 
 							factor * self.n_hid if j == 0 \
 							else (factor // 2) * self.n_hid)) \
-							for j in br], ('upsample', nn.Upsample(scale_factor=2, mode='nearest'))
+							for j in br],
+							('upsample', nn.ConvTranspose2d(
+                                (factor // 2) * self.n_hid, 
+                                (factor // 2) * self.n_hid,
+                                kernel_size=2, stride=2)
+                            )
 			])))])
 
 		blocks.append(('output', nn.Sequential(

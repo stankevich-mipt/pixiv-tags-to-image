@@ -7,6 +7,7 @@
 /dataset/files_to_tags_3.pickle
 /dataset/files_to_tags_4.pickle
 /dataset/files_to_tags_5.pickle
+/dataset/files_to_tags_6.pickle
 /dataset/images_pixiv/
 /dataset/images_pixiv_2/
 /dataset/tags.txt
@@ -17,3 +18,5 @@
 /vqvae/test.ipynb
 /vqvae/__pycache__/
 /vqvae/.ipynb_checkpoints/
+
+/dataset/bert_finetuned.pt

@@ -86,13 +86,15 @@ class Encoder(nn.Module):
 
 		for i in range(1, self.n_groups):
 			factor = int(2 ** (i - 1))
+
 			blocks.extend([
 				(f'group_{i+1}', nn.Sequential(
 					OrderedDict([
 						*[(f'block_{j + 1}', make_b(
 							factor * self.n_hid if j == 0 \
 							else factor * 2 * self.n_hid, factor * 2 * self.n_hid)) \
-							for j in br], ('pool', nn.MaxPool2d(kernel_size=2))
+							for j in br], 
+							('pool', nn.Conv2d(factor * 2 * self.n_hid, factor * 2 * self.n_hid, kernel_size=2, stride=2))
 			])))])
 
 		blocks.append(('output', nn.Sequential(
@@ -101,7 +103,7 @@ class Encoder(nn.Module):
 				('conv', nn.Conv2d((2 ** (self.n_groups - 1)) * self.n_hid, self.n_out, 1))
 			])
 		)))
-		
+
 		self.blocks = nn.Sequential(OrderedDict(blocks))
 
 
