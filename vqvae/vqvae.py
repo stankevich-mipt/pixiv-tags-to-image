@@ -93,8 +93,6 @@ class VQVAE2(nn.Module):
 			self.embedding_dim, self.embedding_dim, 4, stride=2, padding=1
 		)
 
-		self.scaler = ReLU1()
-
 
 	def encode(self, x):
 
@@ -123,4 +121,4 @@ class VQVAE2(nn.Module):
 
 	def forward(self, x):
 		quant_t, quant_b, diff, _, _ = self.encode(x)
-		return sefl.scaler(self.decode(quant_t, quant_b)), diff
+		return torch.sigmoid(self.decode(quant_t, quant_b)), diff
