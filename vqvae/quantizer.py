@@ -65,3 +65,8 @@ class VectorQuantizer(nn.Module):
 
 		return quantize, diff, embed_ind 
 
+
+	def embed_code(self, embed_id):
+
+		return F.embedding(embed_id, self.embedding.transpose(0, 1))
+

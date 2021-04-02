@@ -119,6 +119,17 @@ class VQVAE2(nn.Module):
 
 		return self.decoder_b(quant)
 
+	def decode_code(self, code_t, code_b):
+
+		quant_t = self.quantizer_t.embed_code(code_t)
+		quant_t = quant_t.permute(0, 3, 1, 2)
+		quant_b = self.quantizer_b.embed_code(code_b)
+		quant_b = quant_b.permute(0, 3, 1, 2)
+
+		dec = self.decode(quant_t, quant_b)
+
+		return dec
+
 	def forward(self, x):
 		quant_t, quant_b, diff, _, _ = self.encode(x)
 		return torch.sigmoid(self.decode(quant_t, quant_b)), diff
