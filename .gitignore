@@ -11,8 +11,10 @@
 /dataset/images_pixiv/
 /dataset/images_pixiv_2/
 /dataset/tags.txt
+/dataset/good_images.pickle
+/dataset/good_images_2.pickle
 
-/dataset/files_to_tags.pickle
+/dataset/files_to_tags_full_copy.pickle
 /pixelcnn/.ipynb_checkpoints/
 
 /vqvae/test.ipynb
