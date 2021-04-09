@@ -41,7 +41,7 @@ class VectorQuantizer(nn.Module):
 		embed_ind = embed_ind.view(*z.shape[:-1])
 		quantize  = F.embedding(embed_ind, self.embedding.transpose(0, 1))
 
-		if self.training:
+		if self.embedding.requires_grad:
 			embed_onehot_sum = embed_onehot.sum(0)
 			embed_sum        = flatten.transpose(0, 1) @ embed_onehot
 

@@ -24,7 +24,7 @@ class DecoderBlock(nn.Module):
 
 		self.n_in  = n_in
 		self.n_out = n_out
-		self.n_hid = self.n_out // 4
+		self.n_hid = self.n_out // 2
 
 		self.n_layers  = n_layers
 		self.post_gain = 1. / float(self.n_layers ** 2)  
@@ -82,7 +82,7 @@ class Decoder(nn.Module):
 					OrderedDict([
 						*[(f'block_{j + 1}', make_b(
 							factor * self.n_hid, 
-							factor * self.n_hid if j == 0 \
+							factor * self.n_hid if j != (self.n_block_per_group - 1) \
 							else (factor // 2) * self.n_hid)) \
 							for j in br],
 							('upsample', nn.ConvTranspose2d(

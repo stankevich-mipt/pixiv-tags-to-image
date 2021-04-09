@@ -8,11 +8,17 @@
 /dataset/files_to_tags_4.pickle
 /dataset/files_to_tags_5.pickle
 /dataset/files_to_tags_6.pickle
+/dataset/files_to_tags_7.pickle
+/dataset/files_to_tags_8.pickle
+/dataset/files_to_tags_9.pickle
+/dataset/files_to_tags_10.pickle
 /dataset/images_pixiv/
 /dataset/images_pixiv_2/
+/dataset/images_pixiv_3/
 /dataset/tags.txt
 /dataset/good_images.pickle
 /dataset/good_images_2.pickle
+/dataset/good_images_3.pickle
 
 /dataset/files_to_tags_full_copy.pickle
 /pixelcnn/.ipynb_checkpoints/
