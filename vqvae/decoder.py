@@ -27,21 +27,25 @@ class DecoderBlock(nn.Module):
 		self.n_hid = self.n_out // 2
 
 		self.n_layers  = n_layers
-		self.post_gain = 1. / float(self.n_layers ** 2)  
+		self.post_gain = 1.
 
 		self.id_path = nn.Conv2d(self.n_in, self.n_out, 1) \
 			if (self.n_in != self.n_out) else nn.Identity()
 
 		self.res_path = nn.Sequential(
 			OrderedDict([
-				('relu_1', nn.ReLU()),
 				('conv_1', nn.Conv2d(self.n_in, self.n_hid, kernel_size=3, padding=1)),
-				('relu_2', nn.ReLU()),
+				('norm_1', nn.InstanceNorm2d(self.n_hid, affine=True)),
+				('relu_1', nn.ReLU()),
 				('conv_2', nn.Conv2d(self.n_hid, self.n_hid, kernel_size=3, padding=1)),
-				('relu_3', nn.ReLU()),
+				('norm_2', nn.InstanceNorm2d(self.n_hid, affine=True)),
+				('relu_2', nn.ReLU()),
 				('conv_3', nn.Conv2d(self.n_hid, self.n_hid, kernel_size=3, padding=1)),
-				('relu_4', nn.ReLU()),
-				('conv_4', nn.Conv2d(self.n_hid, self.n_out, kernel_size=3, padding=1))				
+				('norm_3', nn.InstanceNorm2d(self.n_hid, affine=True)),
+				('relu_3', nn.ReLU()),
+				('conv_4', nn.Conv2d(self.n_hid, self.n_out, kernel_size=3, padding=1)),
+				('norm_4', nn.InstanceNorm2d(self.n_out, affine=True)),
+				('relu_4', nn.ReLU())			
 			]))
 
 
@@ -73,7 +77,11 @@ class Decoder(nn.Module):
 		make_b   = partial(DecoderBlock, n_layers=n_layers)
 
 		factor = int(2 ** self.n_groups)
-		blocks = [('input', nn.Conv2d(self.input_channels, factor * self.n_hid, 1))]
+		blocks = [
+			('input', nn.Conv2d(self.input_channels, factor * self.n_hid, 1)),
+			('norm' , nn.InstanceNorm2d(factor * self.n_hid, affine=True)),
+			('relu' , nn.ReLU())
+		]
 
 		for i in range(self.n_groups):
 			factor = int(2 ** (self.n_groups - i))

@@ -27,7 +27,7 @@ class EncoderBlock(nn.Module):
 		self.n_hid = self.n_out // 2
 
 		self.n_layers  = n_layers
-		self.post_gain = 1. / float(self.n_layers ** 2)  
+		self.post_gain = 1.
 
 		self.id_path = nn.Conv2d(self.n_in, self.n_out, 1) \
 			if (self.n_in != self.n_out) else nn.Identity()
@@ -36,14 +36,18 @@ class EncoderBlock(nn.Module):
 
 		self.res_path = nn.Sequential(
 			OrderedDict([
-				('relu_1', nn.ReLU()),
 				('conv_1', nn.Conv2d(self.n_in, self.n_hid, kernel_size=3, padding=1)),
-				('relu_2', nn.ReLU()),
+				('norm_1', nn.InstanceNorm2d(self.n_hid, affine=True)),
+				('relu_1', nn.ReLU()),
 				('conv_2', nn.Conv2d(self.n_hid, self.n_hid, kernel_size=3, padding=1)),
-				('relu_3', nn.ReLU()),
+				('norm_2', nn.InstanceNorm2d(self.n_hid, affine=True)),
+				('relu_2', nn.ReLU()),
 				('conv_3', nn.Conv2d(self.n_hid, self.n_hid, kernel_size=3, padding=1)),
-				('relu_4', nn.ReLU()),
-				('conv_4', nn.Conv2d(self.n_hid, self.n_out, kernel_size=3, padding=1))				
+				('norm_3', nn.InstanceNorm2d(self.n_hid, affine=True)),
+				('relu_3', nn.ReLU()),
+				('conv_4', nn.Conv2d(self.n_hid, self.n_out, kernel_size=3, padding=1)),
+				('norm_4', nn.InstanceNorm2d(self.n_out, affine=True)),
+				('relu_4', nn.ReLU())				
 			]))
 
 
@@ -75,12 +79,14 @@ class Encoder(nn.Module):
 
 		blocks   = [
 			('input'  , nn.Conv2d(self.input_channels, self.n_hid, kernel_size=7, padding=3)),
+			('norm'   , nn.InstanceNorm2d(self.n_hid, affine=True)),
+			('relu'   , nn.ReLU()),
 			('group_1', nn.Sequential(
 				OrderedDict([
 						*[(f'block_{j + 1}', make_b(
 							1 * self.n_hid, 1 * self.n_hid)) for j in br
 						],
-						('pool', nn.MaxPool2d(kernel_size=2))
+						('pool', nn.Conv2d(self.n_hid, self.n_hid, kernel_size=2, stride=2))
 			])))
 		]
 
@@ -99,7 +105,7 @@ class Encoder(nn.Module):
 
 		blocks.append(('output', nn.Sequential(
 			OrderedDict([
-				('relu', nn.ReLU()),
+				('relu'   , nn.ReLU()),
 				('conv', nn.Conv2d((2 ** (self.n_groups - 1)) * self.n_hid, self.n_out, 1))
 			])
 		)))
