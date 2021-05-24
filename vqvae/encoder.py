@@ -24,7 +24,7 @@ class EncoderBlock(nn.Module):
 
 		self.n_in  = n_in
 		self.n_out = n_out
-		self.n_hid = self.n_out // 2
+		self.n_hid = self.n_out
 
 		self.n_layers  = n_layers
 		self.post_gain = 1.
@@ -37,16 +37,12 @@ class EncoderBlock(nn.Module):
 		self.res_path = nn.Sequential(
 			OrderedDict([
 				('conv_1', nn.Conv2d(self.n_in, self.n_hid, kernel_size=3, padding=1)),
-				('norm_1', nn.InstanceNorm2d(self.n_hid, affine=True)),
 				('relu_1', nn.ReLU()),
 				('conv_2', nn.Conv2d(self.n_hid, self.n_hid, kernel_size=3, padding=1)),
-				('norm_2', nn.InstanceNorm2d(self.n_hid, affine=True)),
 				('relu_2', nn.ReLU()),
 				('conv_3', nn.Conv2d(self.n_hid, self.n_hid, kernel_size=3, padding=1)),
-				('norm_3', nn.InstanceNorm2d(self.n_hid, affine=True)),
 				('relu_3', nn.ReLU()),
 				('conv_4', nn.Conv2d(self.n_hid, self.n_out, kernel_size=3, padding=1)),
-				('norm_4', nn.InstanceNorm2d(self.n_out, affine=True)),
 				('relu_4', nn.ReLU())				
 			]))
 
@@ -79,7 +75,6 @@ class Encoder(nn.Module):
 
 		blocks   = [
 			('input'  , nn.Conv2d(self.input_channels, self.n_hid, kernel_size=7, padding=3)),
-			('norm'   , nn.InstanceNorm2d(self.n_hid, affine=True)),
 			('relu'   , nn.ReLU()),
 			('group_1', nn.Sequential(
 				OrderedDict([
